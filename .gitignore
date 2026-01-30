@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+Images_Input/
+Images_Clean/
+Metadata_Logs/
+*.pyc
