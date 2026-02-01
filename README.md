@@ -1,6 +1,6 @@
 # ☢️ Exif Nuke (Privacy Tool)
 
-**Exif Nuke** is a forensic privacy tool designed to strip hidden metadata (EXIF data) from images. 
+**Exif Nuke** is a lightweight forensic privacy tool built in Python designed to strip hidden metadata (EXIF data) from images.
 
 Modern smartphones and cameras embed sensitive data into photos—including GPS coordinates, device models, and timestamps—which can compromise user privacy when uploaded online. This tool automatically scans, extracts this hidden intelligence for review, and produces a clean, safe version of the image.
 
@@ -46,3 +46,7 @@ Modern smartphones and cameras embed sensitive data into photos—including GPS 
 
 ## 🛡️ Disclaimer
 This tool is intended for privacy protection and educational purposes. Always ensure you have ownership of the files you are processing.
+
+## ⚠️ Known Limitations
+* **File Types:** Currently supports `.jpg` and `.jpeg` formats only.
+* **Non-Destructive:** The tool creates a *copy* of the clean image rather than overwriting the original to prevent data loss.
