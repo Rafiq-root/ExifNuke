@@ -9,7 +9,10 @@ CLEAN_FOLDER = "./Images_Clean"
 LOG_FOLDER = "./Metadata_Logs"
 
 def setup_folders():
-    """Create the necessary folders if they don't exist."""
+    """
+    Checks if the output directories exist.
+    If they do not exist, this function creates them to prevent file errors.
+    """
     if not os.path.exists(CLEAN_FOLDER):
         os.makedirs(CLEAN_FOLDER)
     if not os.path.exists(LOG_FOLDER):
@@ -17,12 +20,17 @@ def setup_folders():
 
 def extract_metadata(image, filename):
     """
-    Extracts hidden data (EXIF) from the image and saves it to a text file.
+    Extracts EXIF metadata from an image object.
+    
+    Args:
+        image (PIL.Image): The opened image object.
+        filename (str): The name of the file being processed.
+        
+    Returns:
+        bool: True if metadata was found and saved, False otherwise.
     """
-    # Get the raw EXIF data dictionary
     exif_data = image.getexif()
     
-    # Create a text file name (e.g., photo.jpg -> photo_report.txt)
     log_filename = f"{os.path.splitext(filename)[0]}_report.txt"
     log_path = os.path.join(LOG_FOLDER, log_filename)
 
@@ -33,13 +41,9 @@ def extract_metadata(image, filename):
             f.write("No EXIF metadata found in this image.\n")
             return False
 
-        # Loop through all the hidden tags
         found_data = False
         for tag_id, value in exif_data.items():
-            # Translate the number ID (e.g., 306) to a human name (e.g., "DateTime")
             tag_name = ExifTags.TAGS.get(tag_id, tag_id)
-            
-            # Write it to the text file
             f.write(f"{tag_name}: {value}\n")
             found_data = True
             
@@ -47,14 +51,18 @@ def extract_metadata(image, filename):
 
 def clean_image(image, filename):
     """
-    Saves a new copy of the image without the metadata.
+    Creates a deep copy of the image pixel data without the metadata tags.
+    
+    Args:
+        image (PIL.Image): The source image.
+        filename (str): The output filename.
     """
     clean_path = os.path.join(CLEAN_FOLDER, filename)
     
-    # We create a new empty image list to strip data
+    # Extract raw pixel data to strip attached metadata
     data = list(image.getdata())
     
-    # Creating a fresh image object ensures no old metadata carries over
+    # Create new image object with same mode and size
     image_without_exif = Image.new(image.mode, image.size)
     image_without_exif.putdata(data)
     
@@ -62,18 +70,19 @@ def clean_image(image, filename):
     print(f"   [+] Clean image saved to: {clean_path}")
 
 def process_images():
+    """
+    Main orchestration function.
+    Iterates through the input folder, handles errors, and calls processing functions.
+    """
     print(f"[*] Scanning folder: {INPUT_FOLDER} ...")
     
-    # Loop through every file in the input folder
     for filename in os.listdir(INPUT_FOLDER):
         file_path = os.path.join(INPUT_FOLDER, filename)
         
-        # Skip if it's a folder or not an image
         if not os.path.isfile(file_path):
             continue
             
         try:
-            # Open the image
             with Image.open(file_path) as img:
                 print(f"\nProcessing: {filename}")
                 
